@@ -9,7 +9,7 @@ from .permissions import IsAuthorOrReadOnly
 
 class PostViewSet(viewsets.ModelViewSet):
     """
-    /api/v1/posts/ ; /api/v1/posts/{id}/
+    Вьюсет для работы с постами.
     """
     queryset = Post.objects.select_related('author').all()
     serializer_class = PostSerializer
@@ -21,8 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    /api/v1/groups/ ; /api/v1/groups/{id}/
-    Только чтение.
+    Вьюсет только для чтения групп.
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
@@ -31,8 +30,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     """
-    /api/v1/posts/{post_id}/comments/
-    /api/v1/posts/{post_id}/comments/{id}/
+    Вьюсет для комментариев к постам.
     """
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated, IsAuthorOrReadOnly)
@@ -41,7 +39,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         return get_object_or_404(Post, pk=self.kwargs.get('post_id'))
 
     def get_queryset(self):
-        # Возвращаем только комментарии конкретного поста
         return Comment.objects.select_related(
             'author', 'post'
         ).filter(post=self.get_post())
